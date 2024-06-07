@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { ENV } from '../configs/envConfig.js';
 import { createError } from './error.js';
 
-export const verifieToken = (req, res, next) => {
+const verifieToken = (req, res, next) => {
   // Récupère le jeton (token) JWT à partir des cookies de la requête
   const token = req.cookies.access_token;
 
@@ -26,3 +26,5 @@ export const verifieToken = (req, res, next) => {
     next();
   })
 }
+
+export default { verifieToken }
