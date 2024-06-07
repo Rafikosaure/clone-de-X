@@ -16,7 +16,7 @@ connectDB(ENV.MONGO_URI, ENV.DB_NAME);
 
 // CORS OPTIONS
 const corsOptions = {
-  origin: ENV.CLIENT_ORIGIN || "http://localhost:8080",
+  origin: ENV.CLIENT_ORIGIN || "http://localhost:8000",
 };
 
 // MIDDLEWARES
