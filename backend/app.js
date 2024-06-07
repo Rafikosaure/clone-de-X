@@ -1,9 +1,11 @@
 import { ENV } from "./configs/envConfig.js";
 import connectDB from "./configs/dbConfig.js";
-
 import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
+
+// ROUTES
+import routerUser from './routes/userRoutes.js'
 
 // APP EXPRESS
 const app = express();
@@ -21,6 +23,8 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-// URLS API PREFIX
+// MIDDLEWARE TO ROUTE
+app.use('/api/user', routerUser)
+
 
 export default app;
