@@ -6,6 +6,7 @@ import cors from "cors";
 
 // ROUTES
 import routerUser from './routes/userRoutes.js'
+import TweetRouter from "./routes/tweetRoutes.js";
 
 // APP EXPRESS
 const app = express();
@@ -25,6 +26,6 @@ app.use(cookieParser());
 
 // MIDDLEWARE TO ROUTE
 app.use('/api/user', routerUser)
-
+app.use("/api/tweet", TweetRouter);
 
 export default app;
