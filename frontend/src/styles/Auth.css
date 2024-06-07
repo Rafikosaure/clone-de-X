@@ -1,4 +1,4 @@
-.register-page {
+.auth-page {
     padding-top: 20px;
     padding-bottom: 50px;
     background-color: black;
@@ -14,7 +14,7 @@
     position: relative;
 }
 
-.register-close-button {
+.auth-close-button {
     position: absolute;
     color: white;
     height: fit-content;
@@ -25,14 +25,14 @@
     cursor: pointer;
 }
 
-.register-close-button p {
+.auth-close-button p {
     margin: 0;
     line-height: 14px;
     font-size: 30px;
     height: 22px;
 }
 
-.register-content {
+.auth-content {
     margin-left: auto;
     margin-right: auto;
     width: 70%;
@@ -50,12 +50,12 @@
     height: 34px;
 }
 
-.register-content h1 {
+.auth-content h1 {
     margin-bottom: 40px;
 }
 
 
-.register-form {
+.auth-form {
     width: 100%;
     color: grey;
     display: flex;
@@ -67,7 +67,7 @@
     
 }
 
-.register-form input {
+.auth-form input {
     color: white;
     font-size: 18px;
     border: none;
@@ -79,20 +79,20 @@
     outline: 2px solid grey;
 }
 
-.register-form input::placeholder {
+.auth-form input::placeholder {
     color: grey;
     font-size: 18px;
 }
 
-.register-form input:focus {
+.auth-form input:focus {
     outline: 2px solid lightskyblue;
 }
 
-.register-form input:focus::placeholder {
+.auth-form input:focus::placeholder {
     color: lightskyblue;
 }
 
-.register-form button {
+.auth-form button {
     margin-top: 50px;
     width: 100%;
     height: 55px;
