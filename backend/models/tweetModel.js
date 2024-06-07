@@ -1,11 +1,16 @@
 import mongoose from "mongoose";
 
 const tweetSchema = mongoose.Schema({
-  content: { type: String, required: true },
+  content: {
+    type: String,
+    required: true,
+    maxLength: [280, "Content can't exceed 280 characters"],
+  },
   publicationDate: { type: Date, default: Date.now },
-  response: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tweet" }],
-//   media: [{ type: mongoose.Schema.Types.ObjectId, ref: "Media" }],
+  responses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tweet" }],
+  medias: [{ type: mongoose.Schema.Types.ObjectId, ref: "Media" }],
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  parentTweet: { type: mongoose.Schema.Types.ObjectId, ref: "Tweet" },
 });
 
 export default mongoose.model("Tweet", tweetSchema);
