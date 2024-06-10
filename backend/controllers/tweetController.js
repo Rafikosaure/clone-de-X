@@ -52,19 +52,26 @@ const create = async (req, res) => {
 };
 
 const deleteById = async (req, res) => {
-  const { id } = req.params;
-  const tweet = await Tweet.findById(id);
+  try {
+    const { id } = req.params;
+    const tweet = await Tweet.findById(id);
 
-  if (!tweet) {
-    return res.status(404).json({ message: "Tweet not found" });
+    if (!tweet) {
+      return res.status(404).json({ message: "Tweet not found" });
+    }
+
+    if (!tweet.user.equals(req.user.id)) {
+      return res.status(403).json({
+        message:
+          "User doesn't have permission to delete tweet from someone else !",
+      });
+    }
+
+    await Tweet.findByIdAndDelete(id);
+    res.status(200).json({ message: "Tweet has been deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Error in deleting tweet" });
   }
-
-  if (!tweet.user.equals(req.user.id)) {
-    return res.status(403).json({ message: "User doesn't have permission to delete tweet from someone else !" });
-  }
-
-  await Tweet.findByIdAndDelete(id);
-  res.status(200).json({ message: "Tweet has been deleted" });
 };
 
 export default {

@@ -1,12 +1,14 @@
-import express from 'express'
-import userCtrl from '../controllers/userControllers.js'
+import express from "express";
+import userCtrl from "../controllers/userControllers.js";
+import auth from "../middlewares/auth.js";
 
+const router = express.Router();
 
+router.post("/register", userCtrl.register);
+router.post("/login", userCtrl.login);
+router.get("/", userCtrl.getAll);
+router.get("/:id", userCtrl.getById);
+router.put("/:id", auth.verifieToken, userCtrl.updateById);
+router.delete("/:id", auth.verifieToken, userCtrl.deleteById);
 
-const router = express.Router()
-
-router.post('/register', userCtrl.register)
-router.post('/login', userCtrl.login)
-
-
-export default router
+export default router;
