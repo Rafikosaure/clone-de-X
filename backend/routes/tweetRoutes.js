@@ -9,6 +9,7 @@ router.get("/user/:idUser", tweetCtrl.getAllByIdUser);
 router.get("/:id", tweetCtrl.getById);
 router.post("/", auth.verifieToken, tweetCtrl.create);
 router.post("/:id/retweet", auth.verifieToken, tweetCtrl.createRetweet);
+router.post("/:id/response", auth.verifieToken, tweetCtrl.createResponse);
 router.delete("/:id", auth.verifieToken, tweetCtrl.deleteById);
 
 export default router;

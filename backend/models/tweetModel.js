@@ -11,6 +11,7 @@ const tweetSchema = mongoose.Schema({
   medias: [{ type: mongoose.Schema.Types.ObjectId, ref: "Media" }],
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   parentTweet: { type: mongoose.Schema.Types.ObjectId, ref: "Tweet" },
+  originTweet: { type: mongoose.Schema.Types.ObjectId, ref: "Tweet" },
 });
 
 export default mongoose.model("Tweet", tweetSchema);
