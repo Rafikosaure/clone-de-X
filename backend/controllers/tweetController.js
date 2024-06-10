@@ -5,7 +5,16 @@ import { MEDIA_TYPES } from "../utils/constants/models.js";
 
 const getAll = async (req, res) => {
   try {
-    const tweets = await Tweet.find().populate("medias", "-__v -tweet");
+    const tweets = await Tweet.find()
+      .populate("medias", "-__v -tweet")
+      .populate("user", "pseudonym picture")
+      .populate({
+        path: "parentTweet",
+        populate: [
+          { path: "medias", select: "-__v -tweet" },
+          { path: "user", select: "pseudonym picture" },
+        ],
+      });
     res.status(200).json(tweets);
   } catch (error) {
     res.status(500).json({ error: "Error in fetching tweet" });
@@ -22,10 +31,20 @@ const getAllByIdUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const tweets = await Tweet.find({ user: idUser }).populate("medias", "-__v -tweet");
+    const tweets = await Tweet.find({ user: idUser })
+      .populate("medias", "-__v -tweet")
+      .populate("user", "pseudonym picture")
+      .populate({
+        path: "parentTweet",
+        populate: [
+          { path: "medias", select: "-__v -tweet" },
+          { path: "user", select: "pseudonym picture" },
+        ],
+      });
+
     res.status(200).json(tweets);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ error: "Error in fetching tweet" });
   }
 };
@@ -33,7 +52,16 @@ const getAllByIdUser = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const { id } = req.params;
-    const tweet = await Tweet.findById(id).populate("medias", "-__v -tweet");
+    const tweet = await Tweet.findById(id)
+      .populate("medias", "-__v -tweet")
+      .populate("user", "pseudonym picture")
+      .populate({
+        path: "parentTweet",
+        populate: [
+          { path: "medias", select: "-__v -tweet" },
+          { path: "user", select: "pseudonym picture" },
+        ],
+      });
 
     if (!tweet) {
       return res.status(404).json({ message: "Tweet not found" });
@@ -47,13 +75,13 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    if (req.body.content.length > 280) {
+    const { content, medias } = req.body;
+
+    if (content.length > 280) {
       return res
         .status(400)
         .json({ message: "Content can't exceed 280 characters !" });
     }
-
-    const { content, medias } = req.body;
 
     const wrongTypeMedia = medias.find(
       (media) => !MEDIA_TYPES.includes(media.type)
@@ -64,6 +92,41 @@ const create = async (req, res) => {
     }
 
     const tweet = await Tweet.create({ content, user: req.user.id });
+
+    if (medias) {
+      medias.forEach((media) => createTweetMedia(tweet._id, media));
+    }
+
+    res.status(201).json({ message: "Tweet has been created.", tweet });
+  } catch (error) {
+    res.status(500).json({ error: "Error in creating tweet" });
+  }
+};
+
+const createRetweet = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content, medias } = req.body;
+
+    if (content.length > 280) {
+      return res
+        .status(400)
+        .json({ message: "Content can't exceed 280 characters !" });
+    }
+
+    const wrongTypeMedia = medias.find(
+      (media) => !MEDIA_TYPES.includes(media.type)
+    );
+
+    if (wrongTypeMedia) {
+      return res.status(400).json({ message: "Invalid media type" });
+    }
+
+    const tweet = await Tweet.create({
+      content,
+      user: req.user.id,
+      parentTweet: id,
+    });
 
     if (medias) {
       medias.forEach((media) => createTweetMedia(tweet._id, media));
@@ -131,5 +194,6 @@ export default {
   getAllByIdUser,
   getById,
   create,
+  createRetweet,
   deleteById,
 };
