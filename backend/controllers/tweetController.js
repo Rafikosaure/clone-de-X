@@ -44,7 +44,6 @@ const getAllByIdUser = async (req, res) => {
 
     res.status(200).json(tweets);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Error in fetching tweet" });
   }
 };
@@ -138,6 +137,46 @@ const createRetweet = async (req, res) => {
   }
 };
 
+const createResponse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content, medias } = req.body;
+
+    if (content.length > 280) {
+      return res
+        .status(400)
+        .json({ message: "Content can't exceed 280 characters !" });
+    }
+
+    const wrongTypeMedia = medias.find(
+      (media) => !MEDIA_TYPES.includes(media.type)
+    );
+
+    if (wrongTypeMedia) {
+      return res.status(400).json({ message: "Invalid media type" });
+    }
+
+    // Create Response Tweet
+    const tweet = await Tweet.create({
+      content,
+      user: req.user.id,
+      originTweet: id,
+    });
+
+    if (medias) {
+      medias.forEach(async (media) => await createTweetMedia(tweet._id, media));
+    }
+
+    // Update Origin Tweet by insert Response
+    await pushResponseTweet(tweet._id, id);
+
+    res.status(201).json({ message: "Tweet has been created.", tweet });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error in creating tweet" });
+  }
+};
+
 const deleteById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -146,9 +185,6 @@ const deleteById = async (req, res) => {
     if (!tweet) {
       return res.status(404).json({ message: "Tweet not found" });
     }
-    if (!tweet) {
-      return res.status(404).json({ message: "Tweet not found" });
-    }
 
     if (!tweet.user.equals(req.user.id)) {
       return res.status(403).json({
@@ -156,15 +192,13 @@ const deleteById = async (req, res) => {
           "User doesn't have permission to delete tweet from someone else !",
       });
     }
-    if (!tweet.user.equals(req.user.id)) {
-      return res.status(403).json({
-        message:
-          "User doesn't have permission to delete tweet from someone else !",
-      });
-    }
 
-    // Delete medias then tweet
+    // Delete medias of Tweet
     await deleteTweetMedia(tweet._id);
+
+    // Delete reference from origin Tweet
+    await deleteResponseFromTweet(tweet._id, tweet.originTweet);
+
     await Tweet.findByIdAndDelete(tweet._id);
     res.status(200).json({ message: "Tweet has been deleted" });
   } catch (error) {
@@ -189,11 +223,30 @@ const deleteTweetMedia = async (tweetId) => {
   await Media.deleteMany({ tweet: tweetId });
 };
 
+// Update origin Tweet by insert a response Tweet
+const pushResponseTweet = async (responseId, originId) => {
+  await Tweet.findByIdAndUpdate(
+    originId,
+    { $push: { responses: responseId } },
+    { new: true }
+  );
+};
+
+// Remove a Response reference from a Tweet
+const deleteResponseFromTweet = async (responseId, originId) => {
+  await Tweet.findByIdAndUpdate(
+    originId,
+    { $pull: { responses: responseId } },
+    { new: true }
+  );
+};
+
 export default {
   getAll,
   getAllByIdUser,
   getById,
   create,
   createRetweet,
+  createResponse,
   deleteById,
 };
