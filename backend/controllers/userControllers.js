@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import Tweet from "../models/tweetModel.js";
+import Media from "../models/mediaModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { ENV } from "../configs/envConfig.js";
@@ -24,7 +25,6 @@ const login = async (req, res) => {
     const user = await User.findOne({
       email: req.body.email,
     });
-    console.log(user);
     // Si l'user n'est pas trouvé, renvoie une erreur 404
     if (!user) return res.status(404).json("User not found !");
     /* 
@@ -107,7 +107,9 @@ const updateById = async (req, res) => {
       });
     }
 
-    await User.findByIdAndUpdate(id, req.body, {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    await User.findByIdAndUpdate(id, {...req.body, password: hashedPassword}, {
       new: true,
     });
     res.status(200).json({ message: "User has been updated" });
@@ -131,7 +133,7 @@ const deleteById = async (req, res) => {
       });
     }
 
-    deleteTweetMedia(id);
+    deleteTweetUser(id);
     await User.findByIdAndDelete(id);
     res.status(200).json({ message: "User has been deleted" });
   } catch (error) {
@@ -139,7 +141,16 @@ const deleteById = async (req, res) => {
   }
 };
 
-const deleteTweetMedia = async (userId) => {
+// Delete Medias then Tweets from User
+const deleteTweetUser = async (userId) => {
+  const tweets = await Tweet.find({ user: userId });
+
+  // Delete Media from Tweets of User
+  tweets.forEach(async (tweet) => {
+    await Media.deleteMany({ tweet: tweet._id });
+  });
+
+  // Delete Tweets of User
   await Tweet.deleteMany({ user: userId });
 };
 

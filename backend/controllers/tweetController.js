@@ -16,15 +16,16 @@ const getAllByIdUser = async (req, res) => {
   try {
     const { idUser } = req.params;
 
-    const user = await User.findById(idUser).populate("medias", "-__v -tweet");
+    const user = await User.findById(idUser);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const tweets = await Tweet.find({ user: idUser });
+    const tweets = await Tweet.find({ user: idUser }).populate("medias", "-__v -tweet");
     res.status(200).json(tweets);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Error in fetching tweet" });
   }
 };
@@ -120,6 +121,7 @@ const createTweetMedia = async (tweetId, media) => {
   );
 };
 
+// Delete Medias From Tweet
 const deleteTweetMedia = async (tweetId) => {
   await Media.deleteMany({ tweet: tweetId });
 };
