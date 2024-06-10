@@ -4,7 +4,7 @@ import mongooseUniqueValidator from "mongoose-unique-validator";
 const userSchema = mongoose.Schema(
   {
     pseudonym: { type: String, require: true },
-    picture: { type: String, require: false },
+    picture: { type: mongoose.Schema.Types.ObjectId, ref: "Media" },
     email: { type: String, require: true, unique: true },
     password: { type: String, require: true },
     mpEnabled: { type: Boolean, default: false },

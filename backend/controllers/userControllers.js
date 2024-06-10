@@ -70,7 +70,7 @@ const login = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().populate("picture", "-__v -user");
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ error: "Error in fetching user" });
@@ -80,7 +80,7 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("picture", "-__v -user");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -96,6 +96,7 @@ const updateById = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
+    const { picture, password, ...other } = req.body;
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -107,11 +108,33 @@ const updateById = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.findByIdAndUpdate(id, {...req.body, password: hashedPassword}, {
-      new: true,
-    });
+    await User.findByIdAndUpdate(
+      id,
+      { ...other, password: hashedPassword },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "User has been updated" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error in updating user" });
+  }
+};
+
+const updatePicture = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const { picture } = req.body;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await updateUserProfile(id, picture);
+
     res.status(200).json({ message: "User has been updated" });
   } catch (error) {
     res.status(500).json({ error: "Error in updating user" });
@@ -133,7 +156,9 @@ const deleteById = async (req, res) => {
       });
     }
 
-    deleteTweetUser(id);
+    await deleteTweetUser(id);
+    await deleteUserProfile(id);
+
     await User.findByIdAndDelete(id);
     res.status(200).json({ message: "User has been deleted" });
   } catch (error) {
@@ -154,11 +179,29 @@ const deleteTweetUser = async (userId) => {
   await Tweet.deleteMany({ user: userId });
 };
 
+// Update Media from User
+const updateUserProfile = async (userId, media) => {
+  // Delete old Media from User
+  await deleteUserProfile(userId);
+
+  // Create Media
+  const newMedia = await Media.create({ ...media, user: userId });
+
+  // Add Media into User
+  await User.findByIdAndUpdate(userId, { picture: newMedia }, { new: true });
+};
+
+// Delete Media from User
+const deleteUserProfile = async (userId) => {
+  await Media.deleteMany({ user: userId });
+};
+
 export default {
   register,
   login,
   getAll,
   getById,
   updateById,
+  updatePicture,
   deleteById,
 };
