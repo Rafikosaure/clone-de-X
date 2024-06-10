@@ -8,6 +8,7 @@ router.post("/register", userCtrl.register);
 router.post("/login", userCtrl.login);
 router.get("/", userCtrl.getAll);
 router.get("/:id", userCtrl.getById);
+router.put("/updatePic", auth.verifieToken, userCtrl.updatePicture);
 router.put("/:id", auth.verifieToken, userCtrl.updateById);
 router.delete("/:id", auth.verifieToken, userCtrl.deleteById);
 

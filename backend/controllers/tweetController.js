@@ -94,7 +94,7 @@ const create = async (req, res) => {
     const tweet = await Tweet.create({ content, user: req.user.id });
 
     if (medias) {
-      medias.forEach((media) => createTweetMedia(tweet._id, media));
+      medias.forEach(async (media) => await createTweetMedia(tweet._id, media));
     }
 
     res.status(201).json({ message: "Tweet has been created.", tweet });
@@ -129,7 +129,7 @@ const createRetweet = async (req, res) => {
     });
 
     if (medias) {
-      medias.forEach((media) => createTweetMedia(tweet._id, media));
+      medias.forEach(async (media) => await createTweetMedia(tweet._id, media));
     }
 
     res.status(201).json({ message: "Tweet has been created.", tweet });
@@ -164,7 +164,7 @@ const deleteById = async (req, res) => {
     }
 
     // Delete medias then tweet
-    deleteTweetMedia(tweet._id);
+    await deleteTweetMedia(tweet._id);
     await Tweet.findByIdAndDelete(tweet._id);
     res.status(200).json({ message: "Tweet has been deleted" });
   } catch (error) {
