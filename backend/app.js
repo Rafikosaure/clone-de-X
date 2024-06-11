@@ -8,6 +8,7 @@ import cors from "cors";
 import routerUser from './routes/userRoutes.js'
 import TweetRouter from "./routes/tweetRoutes.js";
 import MediaRouter from "./routes/mediaRoutes.js";
+import LikeRouter from "./routes/likeRoutes.js";
 
 // APP EXPRESS
 const app = express();
@@ -29,5 +30,6 @@ app.use(cookieParser());
 app.use('/api/user', routerUser)
 app.use("/api/tweet", TweetRouter);
 app.use("/api/media", MediaRouter);
+app.use("/api/like", LikeRouter);
 
 export default app;

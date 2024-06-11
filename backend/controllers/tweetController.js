@@ -1,6 +1,7 @@
 import Tweet from "../models/tweetModel.js";
 import User from "../models/userModel.js";
 import Media from "../models/mediaModel.js";
+import Like from "../models/likeModel.js";
 import { MEDIA_TYPES } from "../utils/constants/models.js";
 
 const getAll = async (req, res) => {
@@ -156,7 +157,7 @@ const createResponse = async (req, res) => {
       return res.status(400).json({ message: "Invalid media type" });
     }
 
-    // Create Response Tweet
+    // Create Response Tweet without medias
     const tweet = await Tweet.create({
       content,
       user: req.user.id,
@@ -172,7 +173,6 @@ const createResponse = async (req, res) => {
 
     res.status(201).json({ message: "Tweet has been created.", tweet });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Error in creating tweet" });
   }
 };
@@ -193,15 +193,19 @@ const deleteById = async (req, res) => {
       });
     }
 
-    // Delete medias of Tweet
+    // Delete Medias of Tweet
     await deleteTweetMedia(tweet._id);
 
     // Delete reference from origin Tweet
     await deleteResponseFromTweet(tweet._id, tweet.originTweet);
 
+    // Delete Likes of Tweet
+    await deleteLikesTweet(tweet._id);
+
     await Tweet.findByIdAndDelete(tweet._id);
     res.status(200).json({ message: "Tweet has been deleted" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Error in deleting tweet" });
   }
 };
@@ -239,6 +243,11 @@ const deleteResponseFromTweet = async (responseId, originId) => {
     { $pull: { responses: responseId } },
     { new: true }
   );
+};
+
+// Delete Likes of a Tweet
+const deleteLikesTweet = async (tweetId) => {
+  await Like.deleteMany({ tweet: tweetId });
 };
 
 export default {

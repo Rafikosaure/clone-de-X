@@ -9,6 +9,7 @@ const tweetSchema = mongoose.Schema({
   publicationDate: { type: Date, default: Date.now },
   responses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tweet" }],
   medias: [{ type: mongoose.Schema.Types.ObjectId, ref: "Media" }],
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Like" }],
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   parentTweet: { type: mongoose.Schema.Types.ObjectId, ref: "Tweet" },
   originTweet: { type: mongoose.Schema.Types.ObjectId, ref: "Tweet" },
