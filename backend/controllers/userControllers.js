@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";
 import Tweet from "../models/tweetModel.js";
 import Media from "../models/mediaModel.js";
+import Like from "../models/likeModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { ENV } from "../configs/envConfig.js";
@@ -155,8 +156,14 @@ const deleteById = async (req, res) => {
       });
     }
 
+    // Delete User Tweets with their Medias and Likes
     await deleteTweetUser(id);
+
+    // Delete User profile Media
     await deleteUserProfile(id);
+
+    // Delete User Likes
+    await deleteUserLikes(id);
 
     await User.findByIdAndDelete(id);
     res.status(200).json({ message: "User has been deleted" });
@@ -169,9 +176,12 @@ const deleteById = async (req, res) => {
 const deleteTweetUser = async (userId) => {
   const tweets = await Tweet.find({ user: userId });
 
-  // Delete Media from Tweets of User
   tweets.forEach(async (tweet) => {
+    // Delete Media from Tweets of User
     await Media.deleteMany({ tweet: tweet._id });
+
+    // Delete Likes from Tweets of User
+    await Like.deleteMany({ tweet: tweet._id });
   });
 
   // Delete Tweets of User
@@ -193,6 +203,22 @@ const updateUserProfile = async (userId, media) => {
 // Delete Media from User
 const deleteUserProfile = async (userId) => {
   await Media.deleteMany({ user: userId });
+};
+
+const deleteUserLikes = async (userId) => {
+  const likes = await Like.find({ user: userId });
+  
+  // Remove Likes reference of User on each liked Tweet
+  likes.forEach(async (like) => {
+    await Tweet.findByIdAndUpdate(
+      like.tweet,
+      { $pull: { likes: like._id } },
+      { new: true }
+    );
+  });
+
+  // Delete Likes of User
+  await Like.deleteMany({ user: userId });
 };
 
 export default {
