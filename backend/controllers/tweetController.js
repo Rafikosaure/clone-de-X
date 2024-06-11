@@ -172,7 +172,6 @@ const createResponse = async (req, res) => {
 
     res.status(201).json({ message: "Tweet has been created.", tweet });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Error in creating tweet" });
   }
 };

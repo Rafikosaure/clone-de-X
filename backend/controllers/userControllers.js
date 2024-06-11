@@ -118,7 +118,6 @@ const updateById = async (req, res) => {
 
     res.status(200).json({ message: "User has been updated" });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Error in updating user" });
   }
 };
