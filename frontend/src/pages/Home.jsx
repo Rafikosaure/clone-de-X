@@ -1,21 +1,14 @@
-import React, { useEffect } from 'react'
-import '../App.css'
-import { useState } from 'react'
-
+import React, { useContext } from "react";
+import "../App.css";
+import { AuthContext } from "../utils/contexts/AuthContext";
 
 export default function Home() {
+  const { user, disconnect } = useContext(AuthContext);
 
-  const [loggedUser, setLoggedUser] = useState(localStorage.getItem('user'))
-
-  useEffect(() => {
-    if (!loggedUser) {
-      setLoggedUser('Hello world!')
-    }
-  }, [loggedUser])
- 
   return (
-    <div className='App'>
-      {loggedUser}
+    <div className="App">
+      {user || "not connected"}
+      <button onClick={disconnect}>disconnect</button>
     </div>
-  )
+  );
 }
