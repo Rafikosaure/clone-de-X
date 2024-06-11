@@ -93,6 +93,18 @@ const getById = async (req, res) => {
   }
 };
 
+const findLoggedOne = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user)
+  } catch (error) {
+    res.status(404).json({ error })
+  }
+}
+
 const updateById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -226,6 +238,7 @@ export default {
   login,
   getAll,
   getById,
+  findLoggedOne,
   updateById,
   updatePicture,
   deleteById,
