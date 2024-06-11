@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 import '../styles/Auth.css'
 import XLOGO from '../images/X-logo.png'
-import { API_URL } from '../utils/constants/backend'
 import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react'
+import { AuthContext } from '../utils/contexts/AuthContext'
 
 
 export default function Login() {
 
   const [userData, setUserData] = useState({})
   const navigate = useNavigate()
+  const { login, user } = useContext(AuthContext)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -18,9 +19,8 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    axios.post(`${API_URL}/user/login`, userData)
-    .then(data => console.log(data))
-    .catch(error => console.log(error));
+    login(userData)
+    console.log(user)
   }
 
   return (
