@@ -1,0 +1,36 @@
+/* src/styles/Header.css */
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh; /* Hauteur de la navbar couvrant toute la hauteur de la fenêtre */
+    width: 200px; /* Largeur de la navbar */
+    background-color: #121212; /* Couleur de fond similaire à Twitter */
+    display: flex;
+    flex-direction: column; /* Disposition des éléments en colonne */
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 20px; /* Espacement en haut */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Ombre pour un effet de profondeur */
+  }
+  
+  .nav-link {
+    color: white; /* Couleur du texte */
+    text-decoration: none; /* Suppression de la décoration de lien par défaut */
+    font-size: 18px; /* Taille de la police */
+    padding: 10px 15px;
+    width: 50%; /* Les liens prennent toute la largeur de la navbar */
+    text-align: center; /* Centrer le texte */
+    border-radius: 0; /* Bordures non arrondies */
+    transition: background-color 0.3s ease; /* Transition douce pour les changements de couleur */
+    border-radius: 15px;
+  
+  }
+  
+  .nav-link:hover {
+    background-color: rgba(37, 35, 36, 0.42); /* Couleur de fond lors du survol */
+  }
+
+ 
+  

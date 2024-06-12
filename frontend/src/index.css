@@ -11,3 +11,34 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.nav-logo {
+  width: 30px; /* Définir la largeur souhaitée de l'image */
+  height: auto; /* Conserver les proportions de l'image */
+  margin-right: 5px; /* Ajuste l'espacement entre le logo et le texte */
+  filter: invert(100%);
+}
+
+.nav-link {
+  display: flex; /* Utiliser flexbox pour aligner les éléments */
+  align-items: center; /* Centre verticalement les éléments */
+}
+
+.logout-button {
+  position: absolute; /* Positionne le bouton par rapport au bord inférieur de son conteneur */
+  bottom: 20px; /* Définir la distance depuis le bas de la page */
+  left: 50%; /* Positionne le bouton au centre horizontalement */
+  transform: translateX(-50%); /* Centre le bouton horizontalement */
+  padding: 10px 20px; /* Ajustez les dimensions du bouton à votre convenance */
+  font-size: 16px; /* Ajustez la taille de la police à votre convenance */
+  background-color: #007bff; /* Couleur de fond du bouton */
+  color: #fff; /* Couleur du texte du bouton */
+  border: none;
+  border-radius: 25px; /* Arrondir les coins du bouton */
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #0056b3; /* Couleur de fond du bouton au survol */
+}
