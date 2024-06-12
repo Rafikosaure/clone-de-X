@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import { io } from "../services/socket.js";
+
 import PrivateMessage from "../models/privateMessageModel.js";
 import User from "../models/userModel.js";
 
@@ -41,7 +42,6 @@ const getAll = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Error in fetching privateMessage" });
   }
 };
@@ -112,6 +112,8 @@ const create = async (req, res) => {
       user: req.user.id,
     });
 
+    io.emit("newMessage", privateMessage);
+
     res
       .status(201)
       .json({ message: "PrivateMessage has been created.", privateMessage });
@@ -136,9 +138,10 @@ const deleteById = async (req, res) => {
       });
     }
 
+    io.emit("deleteMessage", privateMessage);
+
     res.status(200).json({ message: "PrivateMessage has been deleted" });
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Error in deleting privateMessage" });
   }
 };

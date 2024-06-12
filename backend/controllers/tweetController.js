@@ -1,3 +1,5 @@
+import { io } from "../services/socket.js";
+
 import Tweet from "../models/tweetModel.js";
 import User from "../models/userModel.js";
 import Media from "../models/mediaModel.js";
@@ -97,6 +99,8 @@ const create = async (req, res) => {
       medias.forEach(async (media) => await createTweetMedia(tweet._id, media));
     }
 
+    await emitCreatedTweet(tweet._id);
+
     res.status(201).json({ message: "Tweet has been created.", tweet });
   } catch (error) {
     res.status(500).json({ error: "Error in creating tweet" });
@@ -132,8 +136,11 @@ const createRetweet = async (req, res) => {
       medias.forEach(async (media) => await createTweetMedia(tweet._id, media));
     }
 
+    await emitCreatedTweet(tweet._id);
+
     res.status(201).json({ message: "Tweet has been created.", tweet });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Error in creating tweet" });
   }
 };
@@ -171,6 +178,8 @@ const createResponse = async (req, res) => {
     // Update Origin Tweet by insert Response
     await pushResponseTweet(tweet._id, id);
 
+    await emitCreatedTweet(tweet._id);
+
     res.status(201).json({ message: "Tweet has been created.", tweet });
   } catch (error) {
     res.status(500).json({ error: "Error in creating tweet" });
@@ -203,6 +212,9 @@ const deleteById = async (req, res) => {
     await deleteLikesTweet(tweet._id);
 
     await Tweet.findByIdAndDelete(tweet._id);
+
+    io.emit("deleteTweet", tweet);
+
     res.status(200).json({ message: "Tweet has been deleted" });
   } catch (error) {
     console.log(error);
@@ -248,6 +260,20 @@ const deleteResponseFromTweet = async (responseId, originId) => {
 // Delete Likes of a Tweet
 const deleteLikesTweet = async (tweetId) => {
   await Like.deleteMany({ tweet: tweetId });
+};
+
+const emitCreatedTweet = async (tweetId) => {
+  const populateTweet = await Tweet.findById(tweetId)
+    .populate("medias", "-__v -tweet")
+    .populate("user", "pseudonym picture")
+    .populate({
+      path: "parentTweet",
+      populate: [
+        { path: "medias", select: "-__v -tweet" },
+        { path: "user", select: "pseudonym picture" },
+      ],
+    });
+  io.emit("newTweet", populateTweet);
 };
 
 export default {

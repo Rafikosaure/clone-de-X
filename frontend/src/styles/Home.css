@@ -1,0 +1,12 @@
+.Tweets {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.Tweet {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
