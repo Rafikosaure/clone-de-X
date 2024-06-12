@@ -1,0 +1,104 @@
+.auth-page {
+    padding-top: 20px;
+    padding-bottom: 50px;
+    background-color: black;
+    min-width: 400px;
+    width: 35%;
+    height: fit-content;
+    color: white;
+    text-align: left;
+    margin-top: 90px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+    position: relative;
+}
+
+.auth-close-button {
+    position: absolute;
+    color: white;
+    height: fit-content;
+    left: 20px;
+    top: 16px;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+}
+
+.auth-close-button p {
+    margin: 0;
+    line-height: 14px;
+    font-size: 30px;
+    height: 22px;
+}
+
+.auth-content {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+.div-image {
+    padding-bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.div-image img {
+    width: 34px;
+    height: 34px;
+}
+
+.auth-content h1 {
+    margin-bottom: 40px;
+}
+
+
+.auth-form {
+    width: 100%;
+    color: grey;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 40px;
+    
+}
+
+.auth-form input {
+    color: white;
+    font-size: 18px;
+    border: none;
+    width: 100%;
+    height: 60px;
+    border-radius: 6px;
+    background-color: black;
+    padding-left: 10px;
+    outline: 2px solid grey;
+}
+
+.auth-form input::placeholder {
+    color: grey;
+    font-size: 18px;
+}
+
+.auth-form input:focus {
+    outline: 2px solid lightskyblue;
+}
+
+.auth-form input:focus::placeholder {
+    color: lightskyblue;
+}
+
+.auth-form button {
+    margin-top: 50px;
+    width: 100%;
+    height: 55px;
+    border-radius: 30px;
+    background-color: grey;
+    color: black;
+    font-size: 18px;
+    font-weight: bold;
+}
